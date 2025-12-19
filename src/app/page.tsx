@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { BarChart2, CheckCircle, Lock } from "lucide-react";
+import { BarChart2, CheckCircle, Lock, ClipboardPen} from "lucide-react";
 import Link from "next/link";
 
 export default function HomePage() {
@@ -10,7 +10,7 @@ export default function HomePage() {
         <CardHeader className="text-center">
           <div className="flex items-center justify-center">
             <div className="rounded-full bg-blue-100 p-3">
-              <BarChart2 className="h-8 w-8 text-blue-600"/>
+              <ClipboardPen className="h-8 w-20 text-blue-600"/>
             </div>
           </div>
           <CardTitle className="text-lg mt-3"><h1>Bem-Vindo!</h1></CardTitle>

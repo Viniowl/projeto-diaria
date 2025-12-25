@@ -21,7 +21,7 @@ export default function CadastrarPage() {
     const router = useRouter();
 
 
-    const handleSubmit = async (event: FormEvent) => {
+    const handleSubmitCadastro = async (event: FormEvent) => {
         event.preventDefault();
         setError(null);
 
@@ -67,7 +67,7 @@ export default function CadastrarPage() {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <form onSubmit= {handleSubmit}>
+                <form onSubmit= {handleSubmitCadastro}>
                     <div>
                         <div className="flex flex-col space-y-2 border-blue-100 mb-2">
                             <Label htmlFor="name" className="text-blue-600">Nome</Label>
@@ -130,16 +130,16 @@ export default function CadastrarPage() {
                     </div>
                     {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white mt-1.5">Cadastrar</Button>
+                    <CardFooter className="flex flex-col mb-3">
+                        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white mt-1.5">Cadastrar</Button>
+                        <p className="text-sm text-center text-muted-foreground mt-3">
+                            <Link href="/login" className="text-blue-600 hover:underline">
+                                Já possui uma conta? 
+                            </Link>
+                        </p>
+                    </CardFooter>
                 </form>
             </CardContent>
-            <CardFooter className="flex flex-col mb-3">
-                <p className="text-sm text-center text-muted-foreground">
-                    <Link href="/login" className="text-blue-600 hover:underline">
-                            Já possui uma conta? 
-                    </Link>
-                </p>
-            </CardFooter>
         </Card> 
     </div>
   )

@@ -84,7 +84,7 @@ export function Header() {
               <Link href="/login" className="hover:underline">
                 Entrar
               </Link>
-              <Link href="/register" className="hover:underline">
+              <Link href="/cadastrar" className="hover:underline">
                 Cadastrar
               </Link>
             </>

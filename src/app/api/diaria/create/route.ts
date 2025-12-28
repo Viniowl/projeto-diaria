@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
-import { headers } from 'next/headers'; // Importa a função 'headers' do Next.js
+import { headers } from 'next/headers';
 import { prisma } from '@/lib/prisma';
-import { verifyToken } from '@/lib/auth'; // Importa a função correta
+import { verifyToken } from '@/lib/auth';
 import { z } from 'zod';
+import { Prisma } from '../../../../../generated/prisma/client';
 
 const createDailyLogSchema = z.object({
   date: z.coerce.date().refine(d => !Number.isNaN(d.getTime()), { message: "Data Inválida" }),
@@ -53,7 +54,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(newDailyLog, { status: 201 });
   } catch (error) {
-    if (error instanceof Error && 'code' in error && (error as any).code === 'P2002') {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
         return NextResponse.json({ error: 'Já existe um registro para esta data.' }, { status: 409 });
     }
     console.error('Erro ao criar registro diário:', error);

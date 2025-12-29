@@ -29,3 +29,20 @@ export async function createDailyLog(data: CreateDailyLogData, userId: string){
     throw error;
   }
 }
+
+export async function listDailyLogs(userId: string){
+  try {
+    const dailyLogs = await prisma.dailyLog.findMany({
+      where: {
+        userId: userId
+      },
+      orderBy: {
+        date: 'desc'
+      }
+    });
+    return dailyLogs;
+  } catch (error) {
+    console.error("Erro no serviço ao buscar DailyLogs", error);
+    throw new Error("Não foi possivel buscar os registros no banco de dados");
+  }
+}

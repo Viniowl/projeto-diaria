@@ -7,23 +7,35 @@ import { Label} from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Eye, EyeClosed } from "lucide-react";
+import { z } from "zod";
+import { loginSchema, LoginData } from "@/app/_schemas-zod/auth-schemas";
+
 
 export default function LoginPage() {
     const router = useRouter();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const [errors, setErrors] = useState<z.ZodError<LoginData> | null>(null);
+    const [apiError, setApiError] = useState<string | null>(null);
+    const formErrors = errors ? z.treeifyError(errors)?.properties : null;
+
 
     const handleSubmitLogin = async (event: FormEvent) => {
         event.preventDefault();
-        setError(null);
+        setErrors(null);
+        setApiError(null);
+
+        const validation = loginSchema.safeParse({email, password});
+
+        if (!validation.success){
+            setErrors(validation.error);
+            return
+        }
         try {
             const response = await fetch('/api/auth/login',{
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({email, password})
             });
 
@@ -31,13 +43,13 @@ export default function LoginPage() {
                 router.push('/dashboard');
             } else {
                 const data = await response.json();
-                setError (data.message || 'Ocorreu um erro ao fazer login');
+                setApiError (data.message || 'Ocorreu um erro ao fazer login');
             }
         } catch (err) {
             if (err instanceof Error){
-                setError(err.message);
+                setApiError(err.message);
             } else {
-                setError("Ocorreu um erro inesperado ao logar.");
+                setApiError("Ocorreu um erro inesperado ao logar.");
             } 
         }
     }
@@ -64,10 +76,9 @@ export default function LoginPage() {
                                 placeholder="seu@email.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)} required
-                
                                 />
                             </div>
-                            
+                            {formErrors?.email?.errors[0]&& <p className="text-red-500 text-sm mt-1">{formErrors.email.errors[0]}</p>}
                         </div>
                         <div className="flex flex-col space-y-2 border-blue-100 mb-2">
                             <Label htmlFor="password" className="text-blue-600">Senha</Label>
@@ -92,10 +103,11 @@ export default function LoginPage() {
                                         <Eye size={18} />
                                     )}
                                 </Button>
+                                {formErrors?.password?.errors[0]&& <p className="text-red-500 text-sm mt-1">{formErrors.password.errors[0]}</p>}
                             </div>
                         </div>
                     </div>
-                    {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+                    {apiError && <p className="text-red-500 text-sm mt-2">{apiError}</p>}
 
                     <CardFooter className="flex flex-col mt-4">
                         <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">Entrar</Button>

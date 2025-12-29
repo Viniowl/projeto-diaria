@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState, FormEvent} from "react"; 
+import { registerSchema, RegisterData } from "@/app/_schemas-zod/auth-schemas";
+import { z } from "zod";
 
 export default function CadastrarPage() {
 
@@ -17,26 +19,30 @@ export default function CadastrarPage() {
     const [confirmPassword, setConfirmPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-    const [error, setError] = useState< string | null >(null);
+    const [errors, setErrors] = useState< z.ZodError<RegisterData>| null>(null);
+    const [apiError, setApiError] = useState<string | null>(null);
+    const formErrors = errors ? z.treeifyError(errors)?.properties: null;
     const router = useRouter();
 
 
     const handleSubmitCadastro = async (event: FormEvent) => {
-        event.preventDefault();
-        setError(null);
 
-        if (password !== confirmPassword) {
-            setError("As senhas não coincidem.");
+        event.preventDefault();
+        setErrors(null);
+        setApiError(null);
+
+        const validation = registerSchema.safeParse({name, email, password, confirmPassword});
+        
+        if (!validation.success){
+            setErrors(validation.error);
             return;
         }
-    
+
         try {
             const response = await fetch('/api/auth/register',{
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ name, email, password})
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(validation.data)
             });
 
             if (!response.ok) {
@@ -48,9 +54,9 @@ export default function CadastrarPage() {
             
         } catch (err) {
             if (err instanceof Error){
-                setError(err.message);
+                setApiError(err.message);
             } else {
-                setError("Ocorreu um erro inesperado ao cadastrar o usuário.");
+                setApiError("Ocorreu um erro inesperado ao cadastrar o usuário.");
             } 
         }
 
@@ -72,10 +78,12 @@ export default function CadastrarPage() {
                         <div className="flex flex-col space-y-2 border-blue-100 mb-2">
                             <Label htmlFor="name" className="text-blue-600">Nome</Label>
                             <Input id="name" placeholder="Digite seu nome completo" value={name} onChange={(e) => setName(e.target.value)} required/>
+                            {formErrors?.name?.errors[0] && <p className="text-red-500 text-sm mt-1">{formErrors.name.errors[0]}</p>}
                         </div>
                         <div className="flex flex-col space-y-2 border-blue-100 mb-2">
                             <Label htmlFor="email" className="text-blue-600">Email</Label>
                             <Input id="email" type="email" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} required/>
+                            {formErrors?.email?.errors[0] && <p className="text-red-500 text-sm mt-1">{formErrors.email.errors[0]}</p>}
                         </div>
                         <div className="flex flex-col space-y-2 border-blue-100 mb-2">
                             <Label htmlFor="password" className="text-blue-600">Senha</Label>
@@ -100,6 +108,7 @@ export default function CadastrarPage() {
                                         <Eye size={18} />
                                     )}
                                 </Button>
+                                {formErrors?.password?.errors[0] && <p className="text-red-500 text-sm mt-1">{formErrors.password.errors[0]}</p>}
                             </div>
                         </div>
                         <div className="flex flex-col space-y-2 border-blue-100 mb-2">
@@ -125,10 +134,11 @@ export default function CadastrarPage() {
                                         <Eye size={18} />
                                     )}
                                 </Button>
+                                {formErrors?.confirmPassword?.errors[0] && <p className="text-red-500 text-sm mt-1">{formErrors.confirmPassword.errors[0]}</p>}
                             </div>
                         </div>
                     </div>
-                    {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+                    {apiError && <p className="text-red-500 text-sm mt-2">{apiError}</p>}
 
                     <CardFooter className="flex flex-col mb-3">
                         <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white mt-1.5">Cadastrar</Button>

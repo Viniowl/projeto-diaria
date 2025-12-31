@@ -77,9 +77,9 @@ export default function LoginPage() {
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)} required
                                 />
-                            </div>
-                            {formErrors?.email?.errors[0]&& <p className="text-red-500 text-sm mt-1">{formErrors.email.errors[0]}</p>}
+                            </div>  
                         </div>
+                         {formErrors?.email?.errors[0]&& <p className="text-red-500 text-sm mt-1">{formErrors.email.errors[0]}</p>}
                         <div className="flex flex-col space-y-2 border-blue-100 mb-2">
                             <Label htmlFor="password" className="text-blue-600">Senha</Label>
                             <div className="relative">
@@ -103,9 +103,9 @@ export default function LoginPage() {
                                         <Eye size={18} />
                                     )}
                                 </Button>
-                                {formErrors?.password?.errors[0]&& <p className="text-red-500 text-sm mt-1">{formErrors.password.errors[0]}</p>}
                             </div>
                         </div>
+                        {formErrors?.password?.errors[0]&& <p className="text-red-500 text-sm mt-1">{formErrors.password.errors[0]}</p>}
                     </div>
                     {apiError && <p className="text-red-500 text-sm mt-2">{apiError}</p>}
 

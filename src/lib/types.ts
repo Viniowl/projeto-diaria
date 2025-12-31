@@ -1,3 +1,5 @@
+import { type DiariaFormSchema } from "@/app/_schemas-zod/diaria-schema";
+
 export type DailyLog = {
     id: string;
     date: string;
@@ -5,4 +7,7 @@ export type DailyLog = {
     endTime: string;
     totalValue: number;
     status: "paga" | "não paga";
-}
+};
+
+export type DailyLogCreateInput = DiariaFormSchema;
+export type DailyLogUpdateInput = Partial<DiariaFormSchema>;

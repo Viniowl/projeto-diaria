@@ -108,8 +108,8 @@ export default function CadastrarPage() {
                                         <Eye size={18} />
                                     )}
                                 </Button>
-                                {formErrors?.password?.errors[0] && <p className="text-red-500 text-sm mt-1">{formErrors.password.errors[0]}</p>}
                             </div>
+                            {formErrors?.password?.errors[0] && <p className="text-red-500 text-sm mt-1">{formErrors.password.errors[0]}</p>}
                         </div>
                         <div className="flex flex-col space-y-2 border-blue-100 mb-2">
                             <Label htmlFor="confirm-password" className="text-blue-600">Confirmar Senha</Label>
@@ -134,8 +134,8 @@ export default function CadastrarPage() {
                                         <Eye size={18} />
                                     )}
                                 </Button>
-                                {formErrors?.confirmPassword?.errors[0] && <p className="text-red-500 text-sm mt-1">{formErrors.confirmPassword.errors[0]}</p>}
                             </div>
+                            {formErrors?.confirmPassword?.errors[0] && <p className="text-red-500 text-sm mt-1">{formErrors.confirmPassword.errors[0]}</p>}
                         </div>
                     </div>
                     {apiError && <p className="text-red-500 text-sm mt-2">{apiError}</p>}

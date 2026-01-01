@@ -3,11 +3,22 @@
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "../ui/card";
-import { DailyLog } from "@/lib/types";
+import { DailyLog, DailyLogUpdateInput } from "@/lib/types";
 
+interface DiariaLogCardProps {
+    log: DailyLog;
+    onUpdate: (id: string,data: DailyLogUpdateInput) => void;
+    onDelete: (id: string) => void;
+};
 
+export const DiariaLogCard = ({log, onUpdate, onDelete}: DiariaLogCardProps) => {
+    
+    const handleDelete = () => {
+        if (confirm(`Tem certeza que deseja excluir a diária de ${log.date}?`)){
+            onDelete(log.id);
+        }
+    };
 
-export const DiariaLogCard = ({log}: {log: DailyLog}) => {
     return (
         <Card>
             <CardHeader className="flex flex-row items-center justify-between">
@@ -22,7 +33,17 @@ export const DiariaLogCard = ({log}: {log: DailyLog}) => {
             </CardContent>
             <CardFooter className="flex justify-end gap-2">
                 <Button variant="outline" size="sm">Editar</Button>
-                <Button variant="secondary" size="sm">Marcar como Paga</Button>
+                {log.status === 'não paga' && (
+                    <Button variant="secondary" 
+                    size="sm"
+                    onClick={() => onUpdate(log.id, {status: 'PAGA'})}
+                    >
+                        Marcar como Paga
+                    </Button>
+                )}
+                <Button variant="destructive" size="sm" onClick={handleDelete}>
+                    Deletar
+                </Button>
             </CardFooter>
         </Card> 
     );

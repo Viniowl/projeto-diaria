@@ -1,8 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";
+import { type DailyLog } from "@/lib/types";
 
-export const SummaryCards = () => {
-    const totalToReceive = 150.75 + 85.50;
-    const totalReceived = 50.00;
+interface SummaryCardsProps {
+    diarias: DailyLog[];
+}
+export const SummaryCards = ({ diarias }: SummaryCardsProps) => {
+    const totalToReceive = diarias.filter(diaria => diaria.status === 'não paga').reduce((acc, diaria) => acc + diaria.totalValue, 0);
+    const totalReceived = diarias.filter(diaria => diaria.status === 'paga').reduce((sum, diaria) => sum + diaria.totalValue, 0 );
 
     return (
         <div className="grid gap-4 md:grid-cols-2">

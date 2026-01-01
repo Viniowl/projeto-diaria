@@ -22,7 +22,7 @@ export function useDiarias(){
     };
 
     const updateDiaria = async (id: string, diaria: DailyLogUpdateInput) => {
-        const response = await fetch(``/api/diaria`/${id}`/patch``, {
+        const response = await fetch(`/api/diaria/${id}/patch`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify(diaria)
@@ -32,7 +32,7 @@ export function useDiarias(){
     }
 
     const deleteDiaria = async (id: string) => {
-    const response = await fetch(``/api/diaria`/${id}`/delete``, {
+    const response = await fetch(`/api/diaria/${id}/delete`, {
       method: 'DELETE',
     });
     if (!response.ok) throw new Error('Falha ao deletar a diária.');

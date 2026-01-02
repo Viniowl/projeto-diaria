@@ -12,7 +12,7 @@ export type DiariaFormSchema = z.infer<typeof diariaFormSchema>;
 
 export const createDailylogSchema = diariaFormSchema.extend({
     date: z.coerce.date(),
-    status: z.enum (["paga", "não paga"]).optional()
+    status: z.enum (["PAGA", "NAO_PAGA"]).optional()
 });
 
 export type CreateDailylogSchema = z.infer<typeof createDailylogSchema>;

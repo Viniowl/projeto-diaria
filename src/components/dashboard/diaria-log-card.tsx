@@ -29,7 +29,7 @@ export const DiariaLogCard = ({log, onUpdate, onDelete}: DiariaLogCardProps) => 
             </CardHeader>
             <CardContent>
                 <p><strong>Horário:</strong> {log.startTime} às {log.endTime}</p>
-                <p className="text-xl font-semibold mt-2">Valor: R$ {log.totalValue.toFixed(2)}</p>
+                <p className="text-xl font-semibold mt-2">Valor: R$ {parseFloat(log.totalValue.toFixed(2))}</p>
             </CardContent>
             <CardFooter className="flex justify-end gap-2">
                 <Button variant="outline" size="sm">Editar</Button>

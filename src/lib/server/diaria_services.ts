@@ -1,9 +1,9 @@
-import { CreateDailyLogData, createDailyLogSchema } from "@/app/_schemas-zod/diaria-schema";
+import { CreateDailylogSchema, createDailylogSchema } from "@/app/_schemas-zod/diaria-schema";
 import { Prisma } from "../../../generated/prisma/client";
 import { prisma } from "../prisma";
 
-export async function createDailyLog(data: CreateDailyLogData, userId: string){
-    const validation = createDailyLogSchema.safeParse(data);
+export async function createDailyLog(data: CreateDailylogSchema, userId: string){
+    const validation = createDailylogSchema.safeParse(data);
     if (!validation.success){
            throw { name: 'ValidationError', issues: validation.error.flatten().fieldErrors };
   }

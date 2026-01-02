@@ -31,7 +31,7 @@ export async function POST(request: Request) {
     // 2. Encontrar o usuário no banco de dados
     const user = await prisma.user.findUnique({
       where: { email },
-      select: {id: true, password: true}
+      select: {id: true, name: true, email: true, password: true}
     });
 
     if (!user) {
@@ -64,10 +64,14 @@ export async function POST(request: Request) {
       sameSite: 'lax', // Proteção contra ataques CSRF
     });
 
+
+    const { password: _, ...userWithoutPassword } = user;
+
     // 6. Retornar resposta de sucesso com o cookie no cabeçalho
-    const response = NextResponse.json(
-        { message: "Login bem-sucedido!" },
-        { status: 200 }
+    const response = NextResponse.json({
+       message: "Login bem-sucedido!",
+       user: userWithoutPassword
+      }, { status: 200 }
     );
     response.headers.set('Set-Cookie', cookie);
     

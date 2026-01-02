@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
-    const token = request.cookies.get('token')?.value;
+    const token = request.cookies.get('auth_token')?.value;
     if (!token){
         return NextResponse.json({ message: "Não autorizado"}, { status: 401});
     }

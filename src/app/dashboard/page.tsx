@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useDiarias } from "@/hooks/use-diarias";
+import { useUser } from "@/hooks/use-user";
 import { DiariaLogCard } from "@/components/dashboard/diaria-log-card";
 import { SummaryCards } from "@/components/dashboard/summary-cards";
 import { DiariaLogForm } from "@/components/dashboard/diaria-log-form";
@@ -14,15 +15,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function DashboardPage() {
 
-  const {diarias, isLoading, isError, createDiaria, updateDiaria, deleteDiaria } = useDiarias();
+  const {isLoading: isUserLoading} = useUser();
+  const {diarias, isLoading: isDiariasLoading, isError, createDiaria, updateDiaria, deleteDiaria } = useDiarias();
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState<string>("");
   const [selectMonth, setSelectedMonth] = useState<string>("");
 
 
-  if (isLoading){
+  if (isUserLoading || isDiariasLoading){
     return (
-      <div className="container mx-auto p-4 md:p-8 space-y-8">
+      <div className="container mx-auto p-4 md:p-8 space-y-8 bg-amber-400">
         {/* Skeleton para o Header */}
         <div className=" space-y-2">
           <Skeleton className="h-8 w-1/2"/>
@@ -81,6 +83,7 @@ export default function DashboardPage() {
       console.error("Falha ao criar diária: ", error)
     }
   };
+
   return (
     <div className="container mx-auto p-4 md:p-8 space-y-8">
       <header>

@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
-import { createDailyLogSchema } from "@/app/_schemas-zod/diaria-schema";
+import { createDailylogSchema } from "@/app/_schemas-zod/diaria-schema";
 
-const updateDailyLogSchema = createDailyLogSchema.partial();
+const updateDailyLogSchema = createDailylogSchema.partial();
 
 export async function PATCH(request: NextRequest, {params}: {params: {id: string}}){
     const token = request.cookies.get('auth_token')?.value;

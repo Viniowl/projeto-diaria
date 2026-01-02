@@ -1,5 +1,6 @@
 import useSWR from 'swr';
 import { type DailyLog, type DailyLogCreateInput, type DailyLogUpdateInput} from '@/lib/types';
+import { useUser } from './use-user';
 
 const fetcher = (url: string) => fetch(url).then(response =>{
     if (!response.ok){
@@ -9,7 +10,8 @@ const fetcher = (url: string) => fetch(url).then(response =>{
 });
 
 export function useDiarias(){
-    const{ data, error, isLoading, mutate } = useSWR<DailyLog[]>('/api/diaria/list', fetcher);
+    const { user } = useUser();
+    const{ data, error, isLoading, mutate } = useSWR<DailyLog[]>( () => user ? '/api/diaria/list': null,fetcher);
     
     const createDiaria = async (diaria: DailyLogCreateInput) => {
         const response = await fetch('/api/diaria/create',{

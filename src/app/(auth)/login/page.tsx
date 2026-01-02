@@ -2,6 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import { useRouter} from "next/navigation";
+import { useSWRConfig } from "swr";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter} from "@/components/ui/card";
 import { Label} from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -13,6 +14,7 @@ import { loginSchema, LoginData } from "@/app/_schemas-zod/auth-schemas";
 
 export default function LoginPage() {
     const router = useRouter();
+    const { mutate } = useSWRConfig();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
@@ -39,7 +41,10 @@ export default function LoginPage() {
                 body: JSON.stringify({email, password})
             });
 
-            if (response.ok){   
+            if (response.ok){ 
+                const data = await response.json();
+                mutate('api/auth/usuario', data.user, false);  
+                
                 router.push('/dashboard');
             } else {
                 const data = await response.json();

@@ -1,41 +1,12 @@
 "use client";
 import Link from 'next/link';
 import { Button} from './ui/button';
-import { useRouter} from 'next/navigation';
-import { useEffect, useState } from 'react';
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-}
+import { useUser } from '@/hooks/use-user';
+import { useRouter } from 'next/navigation';
 
 export function Header() {
+  const { user, isLoading, mutate} = useUser();
   const router = useRouter();
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch ('/api/auth/usuario');
-
-        if (response.ok) {
-          const userData = await response.json();
-          setUser(userData);
-        } else {
-          setUser(null);
-        }  
-      } catch (error) {
-        console.error("Erro ao buscar usuário:", error);
-        setUser(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []);
 
   const handleLogout = async () => {
     try {
@@ -44,7 +15,7 @@ export function Header() {
       });
 
       if (response.ok) {
-        setUser(null);
+        mutate(null)
         router.push('/login');
       } else {
         console.error("Erro ao deslogar");
@@ -67,7 +38,7 @@ export function Header() {
 
           ): user ? (
             <>
-              <span className="font-semibold">Olá, {user.name}</span>
+              <span className="font-semibold">Olá, {user.name.split(' ')[0]}</span>
               <Link href="/dashboard" className="hover:underline">
                 Diárias
               </Link>

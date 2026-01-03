@@ -6,7 +6,7 @@ export type DailyLog = {
     startTime: string;
     endTime: string;
     totalValue: number;
-    status: "paga" | "não paga";
+    status: "PAGA" | "NAO_PAGA";
 };
 
 export type DailyLogCreateInput = DiariaFormSchema;

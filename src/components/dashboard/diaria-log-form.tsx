@@ -1,52 +1,73 @@
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, useEffect } from "react";
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { Button } from "../ui/button";
-import { type DailyLogCreateInput } from "@/lib/types";
+import { type DailyLogCreateInput, type DailyLog, type DailyLogUpdateInput } from "@/lib/types";
 
 interface DiariaLogFormProps{
-    onSubmit: (data: DailyLogCreateInput) => void;
+    onSubmit: (data: DailyLogCreateInput | DailyLogUpdateInput) => void;
+    initialData: DailyLog | null;
 }
 
 const calculateHours = (startTime: string, endTime: string): number => {
     if (!startTime || !endTime) return 0 ;
 
     const start = new Date(`1970-01-01T${startTime}:00`);
-    const end = new Date(`1971-01-01T${endTime}:00`);
+    const end = new Date(`1970-01-01T${endTime}:00`);
 
-    if (end <= start) return 0;
+    if (end <= start) {
+        end.setDate(end.getDate() + 1);
+    }
 
     const diffMilliseconds = end.getTime() - start.getTime();
     return diffMilliseconds / (1000 * 60 * 60);
 };
 
-export const DiariaLogForm = ({onSubmit}: DiariaLogFormProps) => {
+export const DiariaLogForm = ({onSubmit, initialData}: DiariaLogFormProps) => {
     const [date, setDate] = useState("");
     const [startTime, setStartTime] = useState("");
     const [endTime, setEndTime] = useState("");
     const [hourlyRate, setHourlyRate] = useState("");
 
+    useEffect(() => {
+        if (initialData) {
+            setDate(new Date(initialData.date).toISOString().split('T')[0]);
+            setStartTime(initialData.startTime);
+            setEndTime(initialData.endTime);
+        } else {
+            setDate("");
+            setStartTime("");
+            setEndTime("");
+            setHourlyRate("");
+        }
+    }, [initialData]);
+
     const hours = calculateHours(startTime, endTime);
     const rate = parseFloat(hourlyRate);
-    const totalValue = (hours > 0 && rate > 0) ? (hours * rate) : 0;   
-       
 
+    // Use existing totalValue from initialData if it exists and hourly rate is not being re-entered
+    const totalValue = (hours > 0 && rate > 0) ? (hours * rate) : (initialData?.totalValue ?? 0);   
+       
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
-    
-        const formData: DailyLogCreateInput = {
+
+        const commonData = {
             date: new Date(date),
             startTime,
             endTime,
-            totalValue
+            totalValue: (hours > 0 && rate > 0) ? (hours * rate) : initialData!.totalValue,
         };
-
-        onSubmit(formData);
+    
+        if (initialData) {
+            onSubmit({ ...commonData, id: initialData.id });
+        } else {
+            onSubmit(commonData);
+        }
     };
 
     return (
         <form onSubmit={handleSubmit} className="grid gap-4">
-            <h2 className="text-2xl font-bold">Adicionar Nova Diária</h2>
+            <h2 className="text-2xl font-bold">{initialData ? "Editar Diária" : "Adicionar Nova Diária"}</h2>
             <div>
                 <Label htmlFor="date">Data</Label>
                 <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required/>
@@ -59,7 +80,8 @@ export const DiariaLogForm = ({onSubmit}: DiariaLogFormProps) => {
                 step="0.01" 
                 placeholder="Ex: 25.00"
                 value={hourlyRate}
-                onChange={(e) => setHourlyRate(e.target.value)} required
+                onChange={(e) => setHourlyRate(e.target.value)} 
+                required={!initialData} // Only required when creating a new entry
                 />
             </div>
 
@@ -78,7 +100,7 @@ export const DiariaLogForm = ({onSubmit}: DiariaLogFormProps) => {
                 <p className="text-2xl font-bold">R$ {totalValue.toFixed(2)}</p>
             </div>
             <Button type="submit" className="w-full mt-4">
-                Salvar Diária
+                {initialData ? "Salvar Alterações" : "Salvar Diária"}
             </Button>
         </form>
     );

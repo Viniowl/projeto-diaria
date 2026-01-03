@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useDiarias } from "@/hooks/use-diarias";
 import { useUser } from "@/hooks/use-user";
+import { DiariaModal } from "@/components/dashboard/diaria-modal";
 import { DiariaLogCard } from "@/components/dashboard/diaria-log-card";
 import { SummaryCards } from "@/components/dashboard/summary-cards";
-import { DiariaLogForm } from "@/components/dashboard/diaria-log-form";
-import { type DailyLogCreateInput } from "@/lib/types";
+import { type DailyLogUpdateInput, type DailyLog, type DailyLogCreateInput } from "@/lib/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ export default function DashboardPage() {
 
   const {isLoading: isUserLoading} = useUser();
   const {diarias, isLoading: isDiariasLoading, isError, createDiaria, updateDiaria, deleteDiaria } = useDiarias();
+  const [editingDiaria, setEditingDiaria] = useState<DailyLog | null>(null);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState<string>("");
   const [selectMonth, setSelectedMonth] = useState<string>("");
@@ -72,8 +73,8 @@ export default function DashboardPage() {
     return yearMatch && monthMatch
   });
 
-  const diariasNaoPagas = filteredDiarias.filter(log => log.status === 'não paga');
-  const diariasPagas = filteredDiarias.filter(log => log.status === 'paga');
+  const diariasNaoPagas = filteredDiarias.filter(log => log.status === 'NAO_PAGA');
+  const diariasPagas = filteredDiarias.filter(log => log.status === 'PAGA');
 
   const handleCreateDiaria = async (data: DailyLogCreateInput) => {
     try {
@@ -82,6 +83,38 @@ export default function DashboardPage() {
     } catch (error) {
       console.error("Falha ao criar diária: ", error)
     }
+  };
+
+  const handleUpdateDiaria = async (data: DailyLogUpdateInput) => {
+    if(!editingDiaria) return;
+    try {
+      await updateDiaria(editingDiaria.id, data);
+      setEditingDiaria(null);
+    } catch (error) {
+      console.error("Falha ao atualizar diária: ",error);
+    }
+  };
+
+  const handleSubmit = async (data: DailyLogCreateInput | DailyLogUpdateInput) => {
+    if (editingDiaria){
+      await handleUpdateDiaria(data as DailyLogUpdateInput);
+    } else {
+      await handleCreateDiaria(data as DailyLogCreateInput);
+    }
+  };
+
+  const handleOpenEditModal = (log: DailyLog) => {
+    setEditingDiaria(log);
+  };
+
+  const handleCreateOpenModal = () => {
+    setEditingDiaria(null);
+    setIsFormModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setEditingDiaria(null);
+    setIsFormModalOpen(false);
   };
 
   return (
@@ -115,21 +148,10 @@ export default function DashboardPage() {
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={() => setIsFormModalOpen(true)}>
+        <Button onClick={handleCreateOpenModal}>
           Adicionar Nova Diária
         </Button>
       </div>
-
-      {isFormModalOpen && (
-        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center" onClick={() => setIsFormModalOpen(false)}>
-          <div className="bg-card p-8 rounded-lg w-full max-w-md" onClick={(e) => e.stopPropagation()}>
-            <DiariaLogForm onSubmit={handleCreateDiaria}/>
-            <Button variant="ghost" onClick={() => setIsFormModalOpen(false)} className="w-full mt-2">
-              Cancelar
-            </Button>
-          </div>
-        </div>
-      )}
 
       <Tabs defaultValue="não pagas" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
@@ -139,17 +161,41 @@ export default function DashboardPage() {
         </TabsList>
 
         <TabsContent value="não pagas" className="mt-4 space-y-4">
-          {diariasNaoPagas.map(log => <DiariaLogCard key={log.id} log={log} onUpdate={updateDiaria} onDelete={deleteDiaria} />)}
+          {diariasNaoPagas.map(log => 
+            (<DiariaLogCard key={log.id} 
+            log={log} 
+            onUpdate={updateDiaria} 
+            onDelete={deleteDiaria}
+            onEdit = {handleOpenEditModal}
+            />))}
         </TabsContent>
 
         <TabsContent value="pagas" className="mt-4 space-y-4">
-          {diariasPagas.map(log => <DiariaLogCard key={log.id} log={log} onUpdate={updateDiaria} onDelete={deleteDiaria}/>)}
+          {diariasPagas.map(log => (
+            <DiariaLogCard key={log.id} 
+            log={log} onUpdate={updateDiaria} 
+            onDelete={deleteDiaria}
+            onEdit = {handleOpenEditModal}
+            />))}
         </TabsContent>
 
         <TabsContent value="todas" className="mt-4 space-y-4">
-          {filteredDiarias.map(log => <DiariaLogCard key={log.id} log={log} onUpdate={updateDiaria} onDelete={deleteDiaria}/>)}
+          {filteredDiarias.map(log => (
+            <DiariaLogCard key={log.id} 
+            log={log} 
+            onUpdate={updateDiaria} 
+            onDelete={deleteDiaria}
+            onEdit = {handleOpenEditModal}
+            />))}
         </TabsContent>
       </Tabs>
+
+      <DiariaModal
+        isOpen = {isFormModalOpen || !!editingDiaria}
+        onClose = {handleCloseModal}
+        onSubmit = {handleSubmit}
+        initialData = {editingDiaria}
+      />
     </div>
   );
 }

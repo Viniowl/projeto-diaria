@@ -15,12 +15,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function DashboardPage() {
 
-  const {isLoading: isUserLoading} = useUser();
-  const {diarias, isLoading: isDiariasLoading, isError, createDiaria, updateDiaria, deleteDiaria } = useDiarias();
   const [editingDiaria, setEditingDiaria] = useState<DailyLog | null>(null);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState<string>("");
   const [selectMonth, setSelectedMonth] = useState<string>("");
+
+  const {isLoading: isUserLoading} = useUser();
+  const {diarias, isLoading: isDiariasLoading, isError, createDiaria, updateDiaria, deleteDiaria } = useDiarias(
+    selectedYear ? parseInt(selectedYear) : undefined, 
+    selectMonth ? parseInt(selectMonth) : undefined
+  );
 
 
   if (isUserLoading || isDiariasLoading){

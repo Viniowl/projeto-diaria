@@ -9,9 +9,20 @@ const fetcher = (url: string) => fetch(url).then(response =>{
     return response.json();
 });
 
-export function useDiarias(){
+export function useDiarias(year?: number, month?: number){
     const { user } = useUser();
-    const{ data, error, isLoading, mutate } = useSWR<DailyLog[]>( () => user ? '/api/diaria/list': null,fetcher);
+    const{ data, error, isLoading, mutate } = useSWR<DailyLog[]>( 
+        () => {
+            if (!user) return null;
+            let url = '/api/diaria/list';
+            const params = new URLSearchParams();
+            if (year !== undefined) params.append('year', year.toString());
+            if (month !== undefined) params.append('month', month.toString());
+            if (params.toString()) url += `?${params.toString()}`;
+            return url;
+        },
+        fetcher
+    );
     
     const createDiaria = async (diaria: DailyLogCreateInput) => {
         const response = await fetch('/api/diaria/create',{

@@ -20,8 +20,14 @@ export async function GET(request: NextRequest) {
         }
 
         const userId = decodedToken.userId;
+        const yearParam = request.nextUrl.searchParams.get("year");
+        const monthParam = request.nextUrl.searchParams.get("month");
+        
+        const year = yearParam && !isNaN(Number(yearParam)) ? parseInt(yearParam) : undefined;
+        const month = monthParam && !isNaN(Number(monthParam)) ? parseInt(monthParam) : undefined;
 
-        const dailyLogs = await listDailyLogs(userId);
+
+        const dailyLogs = await listDailyLogs(userId, year, month);
         return NextResponse.json(dailyLogs, { status: 200});
 
 

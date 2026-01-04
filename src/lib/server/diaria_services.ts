@@ -30,11 +30,33 @@ export async function createDailyLog(data: CreateDailylogSchema, userId: string)
   }
 }
 
-export async function listDailyLogs(userId: string){
+export async function listDailyLogs(
+  userId: string,
+  year?: number,
+  month?: number
+) {
   try {
+    let dateFilter: Prisma.DateTimeFilter = {};
+
+    if (year !== undefined) {
+      const startDate = new Date(year, (month !== undefined ? month - 1 : 0), 1);
+      let endDate;
+      if (month !== undefined) {
+        endDate = new Date(year, month, 1); // Start of next month
+      } else {
+        endDate = new Date(year + 1, 0, 1); // Start of next year
+      }
+
+      dateFilter = {
+        gte: startDate,
+        lt: endDate,
+      };
+    }
+
     const dailyLogs = await prisma.dailyLog.findMany({
       where: {
-        userId: userId
+        userId: userId,
+        date: dateFilter,
       },
       orderBy: {
         date: 'desc'

@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyToken } from "@/lib/auth";
 
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, context: { params: { id: string } }) {
     const token = request.cookies.get('auth_token')?.value;
     if (!token){
         return NextResponse.json({ message: "Não autorizado"}, { status: 401});
@@ -16,7 +16,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
     const { userId } = decodedToken ;
 
     try {
-        const { id } = params;
+        const { id } = context.params;
 
         const {count} = await prisma.dailyLog.deleteMany({
             where: {

@@ -5,7 +5,7 @@ import { createDailylogSchema } from "@/app/_schemas-zod/diaria-schema";
 
 const updateDailyLogSchema = createDailylogSchema.partial();
 
-export async function PATCH(request: NextRequest, {params}: {params: {id: string}}){
+export async function PATCH(request: NextRequest, context: {params: {id: string}}){
     console.log("PATCH /api/diaria/[id]/patch: Iniciando requisição"); // Log 1
     const token = request.cookies.get('auth_token')?.value;
     if (!token){
@@ -39,7 +39,7 @@ export async function PATCH(request: NextRequest, {params}: {params: {id: string
             );
         }
         
-        const { id } = await params;
+        const { id } = context.params;
         console.log("PATCH /api/diaria/[id]/patch: Tentando atualizar diária com ID:", id); // Log 7
 
         const updatedDailyLog = await prisma.dailyLog.update({

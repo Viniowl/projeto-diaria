@@ -2,12 +2,11 @@ import { NextResponse, type NextRequest } from "next/server";
 import { verifyToken} from "@/lib/auth";
 import { listDailyLogs } from "@/lib/server/diaria_services";
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+//const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 
 export async function GET(request: NextRequest) {
     try {
-        await sleep(1000);
         const tokenCookie = request.cookies.get("auth_token");
         if(!tokenCookie){
             return NextResponse.json({ error: "Token de autorização não encontrado"}, { status: 401});

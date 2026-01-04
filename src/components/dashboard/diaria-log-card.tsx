@@ -46,7 +46,7 @@ export const DiariaLogCard = ({log, onUpdate, onDelete, onEdit}: DiariaLogCardPr
             </CardContent>
             <CardFooter className="flex justify-end gap-2">
                 {/* O botão "Editar" agora chama a função onEdit recebida via props. */}
-                <Button variant="outline" size="sm" onClick={() => onEdit(log)}>
+                <Button variant="blue" size="sm" onClick={() => onEdit(log)}>
                     Editar
                 </Button>
 

@@ -29,7 +29,15 @@ export function useDiarias(){
             headers: { 'Content-Type': 'application/json'},
             body: JSON.stringify(diaria)
         });
-        if (!response.ok) throw new Error ("Falha ao atualizar Diária");
+        if (!response.ok) {
+            const errorBody = await response.json().catch(() => ({ message: "Falha ao ler o corpo do erro" }));
+            if (Object.keys(errorBody).length === 0) {
+                console.error("Erro da API: Corpo da resposta de erro vazio ou não formatado.", errorBody);
+            } else {
+                console.error("Erro da API: ", errorBody);
+            }
+            throw new Error (errorBody.message || "Falha ao atualizar Diária");
+        }
         mutate();    
     }
 

@@ -25,7 +25,7 @@ export default function DashboardPage() {
 
   if (isUserLoading || isDiariasLoading){
     return (
-      <div className="container mx-auto p-4 md:p-8 space-y-8 bg-amber-400">
+      <div className="container mx-auto p-4 md:p-8 space-y-8">
         {/* Skeleton para o Header */}
         <div className=" space-y-2">
           <Skeleton className="h-8 w-1/2"/>

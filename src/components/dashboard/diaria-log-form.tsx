@@ -1,4 +1,4 @@
-import { useState, type FormEvent, useEffect } from "react";
+import { useState, type FormEvent } from "react";
 import { Input } from "../ui/input"
 import { Label } from "../ui/label"
 import { Button } from "../ui/button";
@@ -24,23 +24,10 @@ const calculateHours = (startTime: string, endTime: string): number => {
 };
 
 export const DiariaLogForm = ({onSubmit, initialData}: DiariaLogFormProps) => {
-    const [date, setDate] = useState("");
-    const [startTime, setStartTime] = useState("");
-    const [endTime, setEndTime] = useState("");
+    const [date, setDate] = useState(initialData ? new Date(initialData.date).toISOString().split('T')[0] : "");
+    const [startTime, setStartTime] = useState(initialData?.startTime ?? "");
+    const [endTime, setEndTime] = useState(initialData?.endTime ?? "");
     const [hourlyRate, setHourlyRate] = useState("");
-
-    useEffect(() => {
-        if (initialData) {
-            setDate(new Date(initialData.date).toISOString().split('T')[0]);
-            setStartTime(initialData.startTime);
-            setEndTime(initialData.endTime);
-        } else {
-            setDate("");
-            setStartTime("");
-            setEndTime("");
-            setHourlyRate("");
-        }
-    }, [initialData]);
 
     const hours = calculateHours(startTime, endTime);
     const rate = parseFloat(hourlyRate);
@@ -51,29 +38,27 @@ export const DiariaLogForm = ({onSubmit, initialData}: DiariaLogFormProps) => {
     const handleSubmit = (e: FormEvent) => {
         e.preventDefault();
 
-        const commonData = {
+        const calculatedTotal = (hours > 0 && rate > 0) ? (hours * rate) : (initialData?.totalValue ?? 0);
+
+        const dataToSubmit = {
             date: new Date(date),
             startTime,
             endTime,
-            totalValue: (hours > 0 && rate > 0) ? (hours * rate) : initialData!.totalValue,
+            totalValue: calculatedTotal,
         };
     
-        if (initialData) {
-            onSubmit({ ...commonData, id: initialData.id });
-        } else {
-            onSubmit(commonData);
-        }
+        onSubmit(dataToSubmit);
     };
 
     return (
         <form onSubmit={handleSubmit} className="grid gap-4">
             <h2 className="text-2xl font-bold">{initialData ? "Editar Diária" : "Adicionar Nova Diária"}</h2>
             <div>
-                <Label htmlFor="date">Data</Label>
+                <Label htmlFor="date" className="mb-2">Data</Label>
                 <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} required/>
             </div>
             <div>
-                <Label htmlFor="hourlyRate">Seu Valor por Hora (R$)</Label>
+                <Label htmlFor="hourlyRate" className="mb-2">Seu Valor por Hora (R$)</Label>
                 <Input
                 id = "hourlyRate" 
                 type = "number" 
@@ -87,17 +72,17 @@ export const DiariaLogForm = ({onSubmit, initialData}: DiariaLogFormProps) => {
 
             <div className="grid grid-cols-2 gap-4">
                 <div>
-                    <Label htmlFor="startTime">Hora de Início</Label>
+                    <Label htmlFor="startTime" className="mb-2">Hora de Início</Label>
                     <Input id="startTime" type="time" value={startTime} onChange={(e) => setStartTime(e.target.value)} required />
                 </div>
                 <div>
-                    <Label htmlFor="endTime">Hora de Término</Label>
+                    <Label htmlFor="endTime" className="mb-2">Hora de Término</Label>
                     <Input id ="endTime" type ="time" value={endTime} onChange={(e) => setEndTime (e.target.value)} required />
                 </div>
             </div>
             <div className="mt-4">
                 <Label>Valor Total Calculado</Label>
-                <p className="text-2xl font-bold">R$ {totalValue.toFixed(2)}</p>
+                <p className="text-2xl font-bold">R$ {Number(totalValue).toFixed(2)}</p>
             </div>
             <Button type="submit" className="w-full mt-4">
                 {initialData ? "Salvar Alterações" : "Salvar Diária"}

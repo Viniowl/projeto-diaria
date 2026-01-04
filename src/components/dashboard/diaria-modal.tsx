@@ -18,6 +18,7 @@ export const DiariaModal = ({isOpen, onClose, onSubmit, initialData}: DiariaModa
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center" onClick={onClose}>
             <div className="bg-card p-8 rounded-lg w-full max-w-md" onClick={(e) => e.stopPropagation()}>
                 <DiariaLogForm
+                    key={initialData ? initialData.id : 'new'}
                     initialData={initialData}
                     onSubmit={onSubmit}
                 />

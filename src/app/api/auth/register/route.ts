@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
-import { hashPassword } from '@/lib/auth';
+import { hashPassword, createToken } from '@/lib/auth';
+import { serialize } from 'cookie';
 
 export async function POST(request: Request) {
     try {
@@ -32,8 +33,20 @@ export async function POST(request: Request) {
         }
     });
 
+    const token = createToken(newUser.id);
+    const cookie = serialize('auth_token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 60 * 60 * 24,
+        path: '/',
+        sameSite: 'lax',
+    });
+
     const {password: _, ...userWithoutPassword} = newUser;
-    return NextResponse.json(userWithoutPassword, { status: 201 });
+
+    const response = NextResponse.json(userWithoutPassword, { status: 201});
+    response.headers.set('Set-Cookie', cookie);
+    return response;
     
     } catch (error) {
         console.error('Erro ao registrar usuário:', error);

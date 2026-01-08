@@ -71,8 +71,8 @@ export default function ForgotPasswordPage() {
                     {isLoading ? 'Enviando...' : 'Enviar link de redefinição'}
                 </Button>
             </form>
-            {message && (<p className="text-green-600 text-center">{message}</p>)}
-            {error && (<p className="text-red-600 text-center">{error}</p>)}
+            {message && (<p className="text-green-600 text-center mt-2.5">{message}</p>)}
+            {error && (<p className="text-red-600 text-center mt-2.5">{error}</p>)}
         </CardContent>
       </Card>
     </div>

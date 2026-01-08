@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
+import Link from "next/link";
 import { useRouter} from "next/navigation";
 import { useSWRConfig } from "swr";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter} from "@/components/ui/card";
@@ -114,8 +115,11 @@ export default function LoginPage() {
                     </div>
                     {apiError && <p className="text-red-500 text-sm mt-2">{apiError}</p>}
 
-                    <CardFooter className="flex flex-col mt-4">
-                        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">Entrar</Button>
+                    <CardFooter className="flex flex-col mt-4 gap-4">
+                        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">Entrar</Button>
+                        <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
+                            Esqueceu sua senha?
+                        </Link>
                     </CardFooter>
                 </form>                                    
              </CardContent>

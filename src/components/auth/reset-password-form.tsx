@@ -25,7 +25,6 @@ export function ResetPasswordFormComponent() {
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async (e: FormEvent) => {
-        console.log("handleSubmit triggered");
         e.preventDefault();
         setErrors(null);
         setApiError(null);
@@ -41,7 +40,6 @@ export function ResetPasswordFormComponent() {
 
         if (!validation.success){
             setErrors(validation.error);
-            console.log("Form validation errors:", validation.error);
             setIsSubmitting(false);
             return;
         }

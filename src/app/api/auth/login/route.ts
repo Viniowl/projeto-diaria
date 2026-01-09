@@ -1,21 +1,15 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { verifyPassword, createToken } from '@/lib/auth';
-import { z } from 'zod';
+import { loginSchema } from '@/app/_schemas-zod/auth-schemas';
 import { serialize } from 'cookie';
-
-// Esquema de validação com Zod
-const LoginSchema = z.object({
-  email: z.email({ message: "E-mail inválido" }),
-  password: z.string().min(1, { message: "A senha é obrigatória" }),
-});
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
 
     // 1. Validar dados de entrada
-    const validation = LoginSchema.safeParse(body);
+    const validation = loginSchema.safeParse(body);
     if (!validation.success) {
       return NextResponse.json(
         {

@@ -1,5 +1,7 @@
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { prisma } from "./prisma";
+
 
 if (!process.env.JWT_SECRET) {
     throw new Error('A variável de ambiente JWT_SECRET não está definida. Por favor, adicione-a ao seu arquivo .env');
@@ -22,9 +24,29 @@ export function createToken(userId: string): string {
 }
 
 // Verificar e decodificar token
-export function verifyToken(token: string): { userId: string} | null {
+export async function verifyToken(token: string): Promise<{ userId: string} | null> {
     try {
-        return jwt.verify(token, JWT_SECRET) as { userId: string };
+        const payload = jwt.verify(token, process.env.JWT_SECRET!) as { userId: string; iat: number };
+        
+        const user = await prisma.user.findUnique({
+            where: {id: payload.userId},
+            select: { passwordChangedAt: true }
+        });
+
+        if (!user) {
+            return null;
+        }
+
+        if (user.passwordChangedAt) {
+            const passwordChangedAtTimestamp = Math.floor(user.passwordChangedAt.getTime() / 1000);
+            
+            if (passwordChangedAtTimestamp > payload.iat) {
+                return null;
+            }
+        }
+
+        return { userId: payload.userId};
+        
     } catch {
         return null;
     }

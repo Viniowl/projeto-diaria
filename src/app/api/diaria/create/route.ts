@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ message: "Não autorizado" }, { status: 401 });
     }
 
-    const decodedToken = verifyToken(token);
+    const decodedToken = await verifyToken(token);
     if (!decodedToken) {
         return NextResponse.json({ message: "Token inválido" }, { status: 401 });
     }

@@ -9,7 +9,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ message: 'Não autorizado: Token não encontrado.' }, { status: 401 });
   }
 
-  const decoded = verifyToken(token);
+  const decoded = await verifyToken(token);
 
   if (!decoded) {
     // Se o token for inválido, é uma boa prática instruir o navegador a removê-lo

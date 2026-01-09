@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
 
         const token = tokenCookie.value;
 
-        const decodedToken = verifyToken(token);
+        const decodedToken =  await verifyToken(token);
         if(!decodedToken?.userId){
             return NextResponse.json({ error: "Token de autorização inválido"}, { status: 401});
         }

@@ -8,7 +8,7 @@ export async function DELETE(request: NextRequest, context: { params: Promise<{ 
         return NextResponse.json({ message: "Não autorizado"}, { status: 401});
     }
 
-    const decodedToken = verifyToken(token);
+    const decodedToken = await verifyToken(token);
     if (!decodedToken){
         return NextResponse.json({ message: "Token Inválido"}, { status: 401});
     }

@@ -11,7 +11,7 @@ export default async function DashboardLayout ({children}: {children: ReactNode}
         redirect('/login');
     }
 
-    const tokenPayload = verifyToken(authToken.value);
+    const tokenPayload = await verifyToken(authToken.value);
 
     if(!tokenPayload){
         redirect('/login');

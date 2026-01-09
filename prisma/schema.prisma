@@ -20,6 +20,7 @@ model User {
   password String
   passwordResetToken String? @unique
   passwordResetExpires DateTime?
+  passwordChangedAt DateTime?
   dailyLogs DailyLog[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

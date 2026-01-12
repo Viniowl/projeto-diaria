@@ -5,7 +5,7 @@ import { createDailylogSchema } from "@/app/_schemas-zod/diaria-schema";
 
 const updateDailyLogSchema = createDailylogSchema.partial();
 
-export async function PATCH(request: NextRequest, context: { params: { id: string } }){
+export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string }>}){
     const token = request.cookies.get('auth_token')?.value;
     if (!token){
         return NextResponse.json({message: "Não autorizado"}, {status: 401});
@@ -33,7 +33,7 @@ export async function PATCH(request: NextRequest, context: { params: { id: strin
             );
         }
         
-        const { id } = context.params;
+        const { id } = await context.params;
 
         const updatedDailyLog = await prisma.dailyLog.update({
             where: {

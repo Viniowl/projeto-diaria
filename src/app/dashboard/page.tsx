@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { DiariasChart } from "@/components/dashboard/diarias-charts";
 
 
 export default function DashboardPage() {
@@ -63,6 +64,9 @@ export default function DashboardPage() {
   }
 
   const availableYears = [... new Set(diarias.map(log => new Date(log.date).getFullYear().toString()))].sort((a,b) => b.localeCompare(a));
+
+  // determine year to filter/chart by: current if none selected
+  const effectiveSelectedYear = selectedYear || new Date().getFullYear().toString();
   const monthsNames: Record<string, string> = {
     '01': 'Janeiro', '02': 'Fevereiro', '03': 'Março', '04': 'Abril', '05': 'Maio', '06': 'Junho',
     '07': 'Julho', '08': 'Agosto', '09': 'Setembro', '10': 'Outubro', '11': 'Novembro', '12': 'Dezembro'
@@ -72,9 +76,9 @@ export default function DashboardPage() {
 
   const filteredDiarias = diarias.filter(log => {
     const logDate = new Date(log.date);
-    const yearMatch = !selectedYear || logDate.getFullYear().toString() === selectedYear;
+    const yearMatch = logDate.getFullYear().toString() === effectiveSelectedYear;
     const monthMatch = !selectMonth || (logDate.getMonth() + 1).toString().padStart(2, '0') === selectMonth;
-    return yearMatch && monthMatch
+    return yearMatch && monthMatch;
   });
 
   const diariasNaoPagas = filteredDiarias.filter(log => log.status === 'NAO_PAGA');
@@ -156,6 +160,8 @@ export default function DashboardPage() {
           Adicionar Nova Diária
         </Button>
       </div>
+
+      <DiariasChart diarias={filteredDiarias} dailyLimit={15} />
 
       <Tabs defaultValue="não pagas" className="w-full">
         <TabsList className="grid w-full grid-cols-3">

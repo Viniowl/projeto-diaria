@@ -62,6 +62,7 @@ export const DiariaLogCard = ({log, onUpdate, onDelete, onEdit}: DiariaLogCardPr
                     Deletar
                 </Button>
             </CardFooter>
+            
         </Card> 
     );
 };

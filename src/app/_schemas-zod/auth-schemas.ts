@@ -15,24 +15,5 @@ export const registerSchema = z.object({
     path: ["confirmPassword"]
 });
 
-export const forgotPasswordSchema = z.object({
-    email: z.email({ message: "E-mail inválido" }),
-});
-
-export const resetPasswordFormSchema = z.object({
-    password: z.string().min(8, {message: "Senha deve ter pelo menos 8 caracteres"}),
-    confirmPassword: z.string(),
-}).refine(data => data.password === data.confirmPassword,{
-    message: "As senhas não conferem",
-    path:["confirmPassword"]
-});
-
-export const resetPasswordSchema = resetPasswordFormSchema.safeExtend({
-    token: z.string().min(1, 'O token é obrigatório')
-});
-
 export type LoginData = z.infer<typeof loginSchema>;
 export type RegisterData = z.infer<typeof registerSchema>;
-export type ResetPasswordFormData = z.infer<typeof resetPasswordFormSchema>;
-export type ResetPasswordData = z.infer<typeof resetPasswordSchema>;
-export type ForgotPasswordData = z.infer<typeof forgotPasswordSchema>;

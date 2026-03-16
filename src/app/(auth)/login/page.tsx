@@ -117,9 +117,6 @@ export default function LoginPage() {
 
                     <CardFooter className="flex flex-col mt-4 gap-4">
                         <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white">Entrar</Button>
-                        <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
-                            Esqueceu sua senha?
-                        </Link>
                     </CardFooter>
                 </form>                                    
              </CardContent>
